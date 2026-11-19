@@ -27,8 +27,10 @@ PARA CAMBIAR TEXTOS
   contenido está junto en ese bloque. Guarda y vuelve a subir la carpeta.
 
 DETALLES
-  - La música suena cuando ella toca el sello al inicio (los celulares no
-    permiten sonido automático). Puedes elegir la canción y ajustar el volumen
-    con los controles de arriba a la izquierda.
+  - La música empieza al tocar el sello (los celulares no permiten sonido
+    automático). El volumen inicia en 5% y el control cambia el volumen real
+    de la música. Los efectos de las interacciones tienen volumen independiente.
+  - Los sobres, las fotos, el moño, el jardín y otras interacciones tienen
+    efectos de sonido que se activan al tocarlos.
   - Las letras (Google Fonts) se cargan desde internet, así que necesita conexión.
   - Prueba el enlace en tu celular antes de dárselo.

@@ -150,7 +150,7 @@ html,body{height:100%;margin:0;background:var(--wine);color:var(--cream);font:40
 <body>
 <canvas id="cv"></canvas><nav id="nv"></nav>
 <audio id="song" src="audio/cancion.mp3" preload="auto" autoplay playsinline loop></audio>
-<div id="mc"><button class="btn" id="mu">♪ música</button><select id="trk" aria-label="Seleccionar canción"><option value="audio/cancion.mp3">The Night We Met</option><option value="audio/wildflower.mp3">WILDFLOWER</option></select><input id="audio-file" type="file" accept="audio/*" hidden><label class="volume-control" for="vl">Vol. <input id="vl" type="range" min="0" max="100" value="13" aria-label="Volumen de la música"><output id="volume-value" for="vl">13%</output></label></div>
+<div id="mc"><button class="btn" id="mu">♪ música</button><select id="trk" aria-label="Seleccionar canción"><option value="audio/cancion.mp3">The Night We Met</option><option value="audio/wildflower.mp3">WILDFLOWER</option></select><input id="audio-file" type="file" accept="audio/*" hidden><label class="volume-control" for="vl">Vol. <input id="vl" type="range" min="0" max="100" value="5" aria-label="Volumen de la música"><output id="volume-value" for="vl">5%</output></label></div>
 <main id="s">
 <section class="sc t-wine hero"><div class="k rv">una carta para ti</div>
  <div class="env" id="env1"><div class="e-back"></div><div class="e-card lace"><div class="clip"></div><b>para</b><h1 id="hn"></h1></div><div class="e-front"></div><div class="e-flap"></div><button class="e-seal" id="seal" aria-label="Abrir la carta"></button></div>
@@ -255,9 +255,56 @@ L.textContent=txt;nt.scrollTop=nt.scrollHeight;setTimeout(step,d)})()}
 const song=$("#song");
 const track=$("#trk");
 const audioFile=$("#audio-file");
-const vol=()=>$("#vl").value/100*.8;
+const vol=()=>$("#vl").value/100;
 let localAudioUrl="";
 song.volume=vol();
+/* efectos de sonido breves, generados localmente y separados del volumen de la música */
+const AudioContextType=window.AudioContext||window.webkitAudioContext;
+let fxContext,fxBus,noiseBuffer;
+function getFxContext(){
+ if(!AudioContextType)return null;
+ if(!fxContext){fxContext=new AudioContextType();fxBus=fxContext.createGain();fxBus.gain.value=.45;fxBus.connect(fxContext.destination)}
+ if(fxContext.state==="suspended")fxContext.resume().catch(error=>console.error("No se pudieron activar los efectos de sonido.",error));
+ return fxContext;
+}
+function fxTone(ctx,frequency,duration,wave="sine",level=.06,endFrequency=frequency,delay=0){
+ const osc=ctx.createOscillator(),gain=ctx.createGain(),start=ctx.currentTime+delay;
+ osc.type=wave;osc.frequency.setValueAtTime(frequency,start);osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFrequency),start+duration);
+ gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(level,start+.012);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+ osc.connect(gain);gain.connect(fxBus);osc.start(start);osc.stop(start+duration);
+}
+function fxNoise(ctx,duration,frequency,level,type="bandpass"){
+ if(!noiseBuffer){noiseBuffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.5),ctx.sampleRate);const data=noiseBuffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1}
+ const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),start=ctx.currentTime;
+ source.buffer=noiseBuffer;filter.type=type;filter.frequency.value=frequency;filter.Q.value=.7;
+ gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(level,start+.012);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+ source.connect(filter);filter.connect(gain);gain.connect(fxBus);source.start(start);source.stop(start+duration);
+}
+function playSound(kind){
+ const ctx=getFxContext();if(!ctx)return;
+ if(kind==="envelope"){fxNoise(ctx,.38,1150,.09,"lowpass");fxTone(ctx,175,.22,"triangle",.07,75)}
+ else if(kind==="bow"){fxTone(ctx,390,.2,"triangle",.06,650)}
+ else if(kind==="paper"){fxNoise(ctx,.17,1700,.055,"highpass");fxTone(ctx,570,.07,"triangle",.025,380)}
+ else if(kind==="plant"){fxTone(ctx,460,.18,"sine",.05,760);fxNoise(ctx,.08,950,.02,"highpass")}
+ else if(kind==="lock"){fxTone(ctx,310,.18,"triangle",.07,240);fxTone(ctx,660,.28,"sine",.055,880,.1)}
+ else if(kind==="gift"){fxTone(ctx,587,.32,"sine",.06,740);fxTone(ctx,740,.36,"sine",.05,988,.09);fxTone(ctx,988,.42,"sine",.045,1175,.18)}
+ else if(kind==="reveal"){fxTone(ctx,659,.28,"sine",.045,784);fxTone(ctx,784,.3,"sine",.04,988,.08);fxTone(ctx,988,.36,"sine",.04,1175,.16)}
+ else if(kind==="scratch")fxNoise(ctx,.14,1250,.045,"highpass");
+ else if(kind==="tap")fxTone(ctx,760,.035,"square",.025,480);
+}
+document.addEventListener("click",e=>{
+ const target=e.target instanceof Element?e.target:null;if(!target)return;
+ if(target.closest("#seal,#seal1,#seal2"))playSound("envelope");
+ else if(target.closest("#bow"))playSound("bow");
+ else if(target.closest(".fc,.pc,#pile"))playSound("paper");
+ else if(target.closest("#lock"))playSound("lock");
+ else if(target.closest(".eye"))playSound("paper");
+ else if(target.closest("#gift"))playSound("gift");
+ else if(target.closest("#sb"))playSound("reveal");
+ else if(target.closest("#gd"))playSound("plant");
+ else if(target.closest("#sx"))playSound("scratch");
+ else if(target.closest("button,a,select,.note,#nv i"))playSound("tap");
+});
 function showAudioError(){
  song.dataset.error="1";
  $("#mu").textContent="♪ elegir MP3";
@@ -276,6 +323,7 @@ $("#mu").onclick=()=>{if(song.dataset.error==="1"){audioFile.click();return}if(s
 track.onchange=()=>{song.pause();song.dataset.error="0";if(localAudioUrl){URL.revokeObjectURL(localAudioUrl);localAudioUrl=""}song.src=track.value;song.currentTime=0;song.load();startMusic()};
 audioFile.onchange=()=>{const file=audioFile.files&&audioFile.files[0];if(!file)return;if(localAudioUrl)URL.revokeObjectURL(localAudioUrl);localAudioUrl=URL.createObjectURL(file);song.dataset.error="0";song.src=localAudioUrl;song.currentTime=0;song.load();startMusic()};
 $("#vl").oninput=()=>{song.volume=vol();$("#volume-value").textContent=$("#vl").value+"%"};
+$("#vl").onchange=()=>playSound("tap");
 document.addEventListener("visibilitychange",()=>{if(document.hidden)song.pause();else if(song.dataset.wants==="1")startMusic()});
 startMusic();
 begin();
