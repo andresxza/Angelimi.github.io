@@ -127,6 +127,12 @@ html,body{height:100%;margin:0;background:var(--wine);color:var(--cream);font:40
  .note{padding-left:34px;padding-right:12px}
  #lt{font-size:clamp(1rem,4.2vw,1.2rem)}
 }
+@media (max-width:340px){
+ #mc{right:8px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px;padding:4px 6px;border-radius:16px}
+ #trk{width:100%;max-width:none;min-width:0}
+ .volume-control{grid-column:1/-1;justify-content:center}
+ #vl{width:clamp(100px,40vw,180px)}
+}
 @media (max-height:680px){
  .sc{overflow-y:auto;scrollbar-width:none;justify-content:flex-start;padding-top:calc(env(safe-area-inset-top,0px) + 56px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 28px)}
  .sc::-webkit-scrollbar{display:none}
@@ -260,12 +266,21 @@ let localAudioUrl="";
 song.volume=vol();
 /* efectos de sonido breves, generados localmente y separados del volumen de la música */
 const AudioContextType=window.AudioContext||window.webkitAudioContext;
-let fxContext,fxBus,noiseBuffer;
+let fxContext,fxBus,noiseBuffer,musicGain;
 function getFxContext(){
  if(!AudioContextType)return null;
  if(!fxContext){fxContext=new AudioContextType();fxBus=fxContext.createGain();fxBus.gain.value=.45;fxBus.connect(fxContext.destination)}
  if(fxContext.state==="suspended")fxContext.resume().catch(error=>console.error("No se pudieron activar los efectos de sonido.",error));
  return fxContext;
+}
+function unlockAudio(){
+ const ctx=getFxContext();if(!ctx)return;
+ if(!musicGain){const source=ctx.createMediaElementSource(song);musicGain=ctx.createGain();source.connect(musicGain);musicGain.connect(ctx.destination)}
+ song.volume=1;musicGain.gain.value=vol();
+}
+function setMusicVolume(){
+ if(musicGain){musicGain.gain.value=vol();song.volume=1}
+ else song.volume=vol();
 }
 function fxTone(ctx,frequency,duration,wave="sine",level=.06,endFrequency=frequency,delay=0){
  const osc=ctx.createOscillator(),gain=ctx.createGain(),start=ctx.currentTime+delay;
@@ -305,12 +320,15 @@ document.addEventListener("click",e=>{
  else if(target.closest("#sx"))playSound("scratch");
  else if(target.closest("button,a,select,.note,#nv i"))playSound("tap");
 });
+document.addEventListener("pointerdown",unlockAudio,{capture:true,passive:true});
+document.addEventListener("touchstart",unlockAudio,{capture:true,passive:true});
+document.addEventListener("keydown",unlockAudio,{capture:true});
 function showAudioError(){
  song.dataset.error="1";
  $("#mu").textContent="♪ elegir MP3";
 }
 function startMusic(){
- song.dataset.wants="1";song.volume=vol();
+ song.dataset.wants="1";setMusicVolume();
  song.play().then(()=>{$("#mu").textContent="♪ silencio";song.dataset.error="0"}).catch(error=>{
   if(error.name==="NotAllowedError"){$("#mu").textContent="♪ toca para activar";return}
   if(error.name==="AbortError")return;
@@ -322,7 +340,7 @@ song.addEventListener("error",showAudioError);
 $("#mu").onclick=()=>{if(song.dataset.error==="1"){audioFile.click();return}if(song.paused)startMusic();else{song.dataset.wants="0";song.pause();$("#mu").textContent="♪ música"}};
 track.onchange=()=>{song.pause();song.dataset.error="0";if(localAudioUrl){URL.revokeObjectURL(localAudioUrl);localAudioUrl=""}song.src=track.value;song.currentTime=0;song.load();startMusic()};
 audioFile.onchange=()=>{const file=audioFile.files&&audioFile.files[0];if(!file)return;if(localAudioUrl)URL.revokeObjectURL(localAudioUrl);localAudioUrl=URL.createObjectURL(file);song.dataset.error="0";song.src=localAudioUrl;song.currentTime=0;song.load();startMusic()};
-$("#vl").oninput=()=>{song.volume=vol();$("#volume-value").textContent=$("#vl").value+"%"};
+$("#vl").oninput=()=>{$("#volume-value").textContent=$("#vl").value+"%";setMusicVolume()};
 $("#vl").onchange=()=>playSound("tap");
 document.addEventListener("visibilitychange",()=>{if(document.hidden)song.pause();else if(song.dataset.wants==="1")startMusic()});
 startMusic();
