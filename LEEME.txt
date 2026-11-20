@@ -27,6 +27,9 @@ PARA CAMBIAR TEXTOS
   contenido está junto en ese bloque. Guarda y vuelve a subir la carpeta.
 
 DETALLES
+  - La pantalla de espera muestra una sorpresa y una cuenta regresiva. La carta
+    se abre automáticamente el 22 de noviembre de 2026 a las 00:00
+    (hora local del dispositivo); no tiene contraseña.
   - La música empieza al tocar el sello (los celulares no permiten sonido
     automático). El volumen inicia en 5% y el control cambia el volumen real
     de la música. Los efectos de las interacciones tienen volumen independiente.
