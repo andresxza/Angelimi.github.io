@@ -264,12 +264,28 @@ const audioFile=$("#audio-file");
 const vol=()=>$("#vl").value/100;
 let localAudioUrl="";
 song.volume=vol();
-/* efectos de sonido breves, generados localmente y separados del volumen de la música */
+/* sonidos del paquete local, separados del volumen de la música */
 const AudioContextType=window.AudioContext||window.webkitAudioContext;
+const FX_FILES={envelope:"audio/efectos/envelope-paper.wav",paper:"audio/efectos/photo-paper.wav",swipe:"audio/efectos/page-whoosh.wav",bow:"audio/efectos/bow-whoosh.mp3",tap:"audio/efectos/ui-click.wav",gift:"audio/efectos/gift-chime.mp3"};
+const fxData=Object.create(null),fxBuffers=Object.create(null),fxDecoding=Object.create(null);
 let fxContext,fxBus,noiseBuffer,musicGain;
+function decodeFx(name,data){
+ if(!fxContext||fxBuffers[name]||fxDecoding[name])return;
+ fxDecoding[name]=1;let completed=0;
+ const fail=error=>{if(completed)return;completed=1;delete fxDecoding[name];console.error("No se pudo decodificar el efecto "+name+".",error)};
+ const ready=buffer=>{if(completed)return;completed=1;delete fxDecoding[name];fxBuffers[name]=buffer};
+ try{
+  const result=fxContext.decodeAudioData(data.slice(0),ready,fail);
+  if(result&&typeof result.catch==="function")result.catch(fail);
+ }catch(error){fail(error)}
+}
+function loadFx(name,url){
+ fetch(url).then(response=>{if(!response.ok)throw new Error("HTTP "+response.status);return response.arrayBuffer()}).then(data=>{fxData[name]=data;if(fxContext)decodeFx(name,data)}).catch(error=>console.error("No se pudo cargar el efecto "+name+".",error));
+}
+Object.keys(FX_FILES).forEach(name=>loadFx(name,FX_FILES[name]));
 function getFxContext(){
  if(!AudioContextType)return null;
- if(!fxContext){fxContext=new AudioContextType();fxBus=fxContext.createGain();fxBus.gain.value=.45;fxBus.connect(fxContext.destination)}
+ if(!fxContext){fxContext=new AudioContextType();fxBus=fxContext.createGain();fxBus.gain.value=.85;fxBus.connect(fxContext.destination);Object.keys(fxData).forEach(name=>decodeFx(name,fxData[name]))}
  if(fxContext.state==="suspended")fxContext.resume().catch(error=>console.error("No se pudieron activar los efectos de sonido.",error));
  return fxContext;
 }
@@ -295,17 +311,37 @@ function fxNoise(ctx,duration,frequency,level,type="bandpass"){
  gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(level,start+.012);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
  source.connect(filter);filter.connect(gain);gain.connect(fxBus);source.start(start);source.stop(start+duration);
 }
+function fxRustle(ctx,duration,level,bursts=4){
+ if(!noiseBuffer){noiseBuffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.5),ctx.sampleRate);const data=noiseBuffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1}
+ const start=ctx.currentTime,step=duration/bursts;
+ for(let i=0;i<bursts;i++){
+  const length=step*(.7+Math.random()*.45),at=start+i*step+Math.random()*.018;
+  const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+  source.buffer=noiseBuffer;filter.type=i%2?"bandpass":"highpass";filter.frequency.setValueAtTime(850+Math.random()*1700,at);filter.frequency.linearRampToValueAtTime(1200+Math.random()*1900,at+length);filter.Q.value=.8;
+  gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(level*(.7+Math.random()*.5),at+.008);gain.gain.exponentialRampToValueAtTime(.0001,at+length);
+  source.connect(filter);filter.connect(gain);gain.connect(fxBus);source.start(at);source.stop(at+length);
+ }
+}
+function playSample(ctx,name,level,rate,duration){
+ const buffer=fxBuffers[name];if(!buffer)return false;
+ const source=ctx.createBufferSource(),gain=ctx.createGain(),start=ctx.currentTime;
+ source.buffer=buffer;source.playbackRate.value=rate;gain.gain.value=level;source.connect(gain);gain.connect(fxBus);
+ if(duration&&duration<buffer.duration/rate){gain.gain.setValueAtTime(level,start);gain.gain.setValueAtTime(level,start+duration*.72);gain.gain.linearRampToValueAtTime(.0001,start+duration);source.start(start,0,duration*rate)}
+ else source.start(start);
+ return true;
+}
 function playSound(kind){
  const ctx=getFxContext();if(!ctx)return;
- if(kind==="envelope"){fxNoise(ctx,.38,1150,.09,"lowpass");fxTone(ctx,175,.22,"triangle",.07,75)}
- else if(kind==="bow"){fxTone(ctx,390,.2,"triangle",.06,650)}
- else if(kind==="paper"){fxNoise(ctx,.17,1700,.055,"highpass");fxTone(ctx,570,.07,"triangle",.025,380)}
- else if(kind==="plant"){fxTone(ctx,460,.18,"sine",.05,760);fxNoise(ctx,.08,950,.02,"highpass")}
- else if(kind==="lock"){fxTone(ctx,310,.18,"triangle",.07,240);fxTone(ctx,660,.28,"sine",.055,880,.1)}
- else if(kind==="gift"){fxTone(ctx,587,.32,"sine",.06,740);fxTone(ctx,740,.36,"sine",.05,988,.09);fxTone(ctx,988,.42,"sine",.045,1175,.18)}
- else if(kind==="reveal"){fxTone(ctx,659,.28,"sine",.045,784);fxTone(ctx,784,.3,"sine",.04,988,.08);fxTone(ctx,988,.36,"sine",.04,1175,.16)}
- else if(kind==="scratch")fxNoise(ctx,.14,1250,.045,"highpass");
- else if(kind==="tap")fxTone(ctx,760,.035,"square",.025,480);
+ if(kind==="envelope"){if(!playSample(ctx,"envelope",.82,1.2,1.1)){fxRustle(ctx,.44,.17,6);fxNoise(ctx,.13,220,.16,"lowpass")}playSample(ctx,"tap",.45,1.5,.14)}
+ else if(kind==="bow"){if(!playSample(ctx,"bow",.8,1.2,.9)){fxRustle(ctx,.24,.12,3);fxTone(ctx,220,.16,"triangle",.1,390)}}
+ else if(kind==="paper"){if(!playSample(ctx,"paper",.8,1.3,.8)){fxRustle(ctx,.22,.13,4);fxTone(ctx,480,.09,"triangle",.045,290)}}
+ else if(kind==="swipe"){if(!playSample(ctx,"swipe",.88,1.15,.7)){fxRustle(ctx,.34,.15,6);fxTone(ctx,240,.3,"sine",.055,120)}}
+ else if(kind==="plant"){playSample(ctx,"tap",.75,1.25,.25);fxTone(ctx,460,.2,"sine",.09,760)}
+ else if(kind==="lock"){playSample(ctx,"tap",.8,1.2,.2);fxTone(ctx,310,.18,"triangle",.1,240);fxTone(ctx,660,.3,"sine",.09,880,.1)}
+ else if(kind==="gift"){if(!playSample(ctx,"gift",.82,1.1,1.5)){fxTone(ctx,587,.32,"sine",.1,740);fxTone(ctx,740,.36,"sine",.09,988,.09);fxTone(ctx,988,.42,"sine",.08,1175,.18)}}
+ else if(kind==="reveal"){if(!playSample(ctx,"gift",.72,1.15,1.25)){fxRustle(ctx,.22,.1,3);fxTone(ctx,659,.28,"sine",.08,784);fxTone(ctx,784,.3,"sine",.075,988,.08)}}
+ else if(kind==="scratch"){if(!playSample(ctx,"envelope",.52,1.5,.28))fxRustle(ctx,.16,.12,3)}
+ else if(kind==="tap"){if(!playSample(ctx,"tap",.72,1.4,.22))fxTone(ctx,760,.045,"square",.055,480)}
 }
 document.addEventListener("click",e=>{
  const target=e.target instanceof Element?e.target:null;if(!target)return;
@@ -323,6 +359,13 @@ document.addEventListener("click",e=>{
 document.addEventListener("pointerdown",unlockAudio,{capture:true,passive:true});
 document.addEventListener("touchstart",unlockAudio,{capture:true,passive:true});
 document.addEventListener("keydown",unlockAudio,{capture:true});
+let swipeTimer=0,swipeStartTop=0;
+$("#s").addEventListener("scroll",e=>{
+ const top=e.currentTarget.scrollTop;
+ if(!swipeTimer&&Math.abs(top-swipeStartTop)<24)return;
+ clearTimeout(swipeTimer);
+ swipeTimer=setTimeout(()=>{playSound("swipe");swipeTimer=0;swipeStartTop=$("#s").scrollTop},200);
+},{passive:true});
 function showAudioError(){
  song.dataset.error="1";
  $("#mu").textContent="♪ elegir MP3";

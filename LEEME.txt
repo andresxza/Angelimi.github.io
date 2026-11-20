@@ -3,7 +3,7 @@ CARTA PARA ANGELI - cómo subirla a internet
 CONTENIDO DE LA CARPETA
   index.html      la carta (la página principal)
   img/            las fotos de la carta (ella, la llamada, Team Nusita y los 4 tulipanes)
-  audio/          la música (cancion.mp3 y wildflower.mp3)
+  audio/          la música y los efectos (incluye la carpeta efectos/)
   LEEME.txt       estas instrucciones
 
 IMPORTANTE: no muevas ni renombres las carpetas img y audio, ni los archivos
@@ -30,7 +30,7 @@ DETALLES
   - La música empieza al tocar el sello (los celulares no permiten sonido
     automático). El volumen inicia en 5% y el control cambia el volumen real
     de la música. Los efectos de las interacciones tienen volumen independiente.
-  - Los sobres, las fotos, el moño, el jardín y otras interacciones tienen
-    efectos de sonido que se activan al tocarlos.
+  - Los sobres, las fotos, el moño, el jardín, los deslizamientos y otras
+    interacciones tienen efectos de sonido que se activan al tocarlos.
   - Las letras (Google Fonts) se cargan desde internet, así que necesita conexión.
   - Prueba el enlace en tu celular antes de dárselo.
