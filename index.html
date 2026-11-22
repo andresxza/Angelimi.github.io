@@ -397,7 +397,16 @@ const secs=$$(".sc:not(.hide)");secs.forEach(s=>{const d=document.createElement(
 const io=new IntersectionObserver(es=>es.forEach(e=>{const i=secs.indexOf(e.target);if(e.intersectionRatio>=.55){e.target.classList.add("in");if(e.target.id==="fin")typeLetter();[...$("#nv").children].forEach((d,k)=>d.classList.toggle("on",k===i))}else if(e.intersectionRatio===0)e.target.classList.remove("in")}),{root:$("#s"),threshold:[0,.55]});
 function begin(){secs.forEach(s=>io.observe(s))}
 const RELEASE_AT=new URLSearchParams(location.search).has("preview")?0:new Date(2026,10,22,0,0,0,0).getTime();
+const GATE_COMPLETED_KEY="angeli-letter-gate-completed";
 let gateCountdown,gateOpening=false;
+function hasCompletedGate(){
+ try{return localStorage.getItem(GATE_COMPLETED_KEY)==="true"}
+ catch(error){console.error("No se pudo comprobar si la prueba ya fue completada.",error);return false}
+}
+function markGateCompleted(){
+ try{localStorage.setItem(GATE_COMPLETED_KEY,"true")}
+ catch(error){console.error("No se pudo guardar que la prueba ya fue completada.",error)}
+}
 function openLetter(){
  if(Date.now()<RELEASE_AT||gateOpening)return;
  gateOpening=true;clearInterval(gateCountdown);
@@ -432,7 +441,7 @@ function startGateChallenge(onSuccess){
  }
  function finishGame(){
   if(finished)return;
-  finished=true;clearTimers();status.textContent="¡Memoria perfecta!";
+  finished=true;clearTimers();markGateCompleted();status.textContent="¡Memoria perfecta!";
   playSound("reveal");burst(90,innerWidth/2,innerHeight*.48);
   setTimeout(()=>{
    card.classList.remove("challenge-mode");challenge.hidden=true;
@@ -712,6 +721,10 @@ if(!still)for(let i=0;i<28;i++)P.push({x:Math.random()*innerWidth,y:Math.random(
  else{p.l+=.01;cx.globalAlpha=.25+.35*Math.sin(p.l*3);if(p.y<-5){p.y=innerHeight+5;p.x=Math.random()*innerWidth}}
  cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.beginPath();p.g?cx.ellipse(0,0,p.r,p.r*.55,0,0,6.3):cx.arc(0,0,p.r,0,6.3);cx.fill();cx.restore()}
  requestAnimationFrame(f)})();
-updateGateCountdown();if(!$("#gate").hidden)gateCountdown=setInterval(updateGateCountdown,1000);
+if(hasCompletedGate()){
+ $("#gate").hidden=true;document.body.classList.remove("waiting");begin();
+}else{
+ updateGateCountdown();if(!$("#gate").hidden)gateCountdown=setInterval(updateGateCountdown,1000);
+}
 </script>
 </body></html>
