@@ -530,6 +530,56 @@ body::before{
  .sc:nth-of-type(n).in .rv{animation:none}
  .im,.fph{animation:none}
 }
+</style>
+<style>
+:root{--slide-ease:cubic-bezier(.16,1,.3,1)}
+@keyframes scene-rise{from{opacity:0;transform:translateY(38px)}to{opacity:1;transform:none}}
+@keyframes scene-focus{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes scene-drift{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes scene-open{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes scene-settle{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@keyframes scene-mystery{from{opacity:0;transform:translateX(28px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes scene-letter{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes scene-gift{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes envelope-arrive{from{opacity:.55;translate:-30px 12px}to{opacity:1;translate:0 0}}
+@keyframes poem-slide{from{opacity:0;translate:var(--d) 9px}to{opacity:1;translate:0 0}}
+@keyframes photo-slide{from{opacity:.35;translate:0 -16px}to{opacity:1;translate:0 0}}
+@keyframes tulip-slide{from{opacity:0;translate:var(--slide-from) 18px}to{opacity:1;translate:0 0}}
+@keyframes eye-slide{from{opacity:.5;translate:0 14px}to{opacity:1;translate:0 0}}
+@keyframes button-rise{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+.cue,#gate::before,#gate::after,.gate-scene,.gate-envelope,.gate-front,.gate-seal,.gate-bow,
+.e-seal,.bow,.lock.open .eye,.im,.fph,#sb,.gift,#cat .e{animation:none}
+.hero.in #env1{animation:envelope-arrive 620ms var(--slide-ease) 80ms both}
+#hl .ln{transition:clip-path 440ms var(--slide-ease);transition-delay:calc(var(--i)*55ms + 40ms)}
+.sc:nth-of-type(2).in #hl .ln{animation:poem-slide 440ms var(--slide-ease) both;animation-delay:calc(var(--i)*55ms + 40ms)}
+.pc{transition:transform 680ms var(--slide-ease),opacity 360ms ease;transition-delay:calc(var(--k)*65ms)}
+.sc:nth-of-type(3).in .pc{animation:photo-slide 520ms var(--slide-ease) both;animation-delay:calc(var(--k)*65ms)}
+#fcs .fc:nth-child(odd){--slide-from:-24px}
+#fcs .fc:nth-child(even){--slide-from:24px}
+.fc{transition:transform 620ms var(--slide-ease) calc(var(--k)*65ms)}
+.sc:nth-of-type(4).in .fc{animation:tulip-slide 460ms var(--slide-ease) both;animation-delay:calc(var(--k)*55ms)}
+.lk-d{transition:transform 760ms var(--slide-ease)}
+.eye{transition:transform 520ms var(--slide-ease) 120ms}
+.sc:nth-of-type(5).in .eye{animation:eye-slide 420ms var(--slide-ease) both;animation-delay:120ms}
+.pt{animation:sp 520ms var(--slide-ease) both}
+@keyframes sp{from{opacity:0;transform:translateY(16px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ok{translate:0 12px;transition:opacity 360ms ease,translate 420ms var(--slide-ease)}
+.ok.show{translate:0 0}
+.e-card{transition:transform 680ms var(--slide-ease) 100ms}
+.e-flap{transition:transform 560ms var(--slide-ease),z-index 0s 280ms,opacity 360ms ease}
+.scard{transition:scale 640ms var(--slide-ease),opacity 360ms ease,translate 640ms var(--slide-ease)}
+.scard.show{translate:-50% -52%}
+#lt2 .n2p{transform:translateX(20px);transition:opacity 380ms ease,transform 420ms var(--slide-ease);transition-delay:calc(var(--i)*65ms + 60ms)}
+#sb:not(.hide){animation:button-rise 440ms var(--slide-ease) both}
+.btn:active,.e-seal:active,#gift:active,.bow:active,.fc:active,.pc:active{scale:.97}
+@media (prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
+ .rv{opacity:1!important;transform:none!important;filter:none!important}
+ .ln{clip-path:none!important;opacity:1!important;translate:0 0!important}
+ #pile .pc{--ty:calc(var(--k)*-4px)!important;opacity:1!important}
+ #lt2 .n2p{opacity:1!important;transform:none!important}
+ #gate,#gate * ,#gate *::before,#gate *::after{animation:none!important}
+}
 </style></head>
 <body class="waiting">
 <div id="gate" role="status" aria-labelledby="gate-title">
@@ -947,16 +997,23 @@ $("#lock").onclick=()=>{if(!$("#lock").classList.contains("open")){$("#lock").cl
 /* gato */
 let ci=0;$("#cat").onclick=()=>{const t=$("#toast");t.textContent=C.gato[ci++%C.gato.length];t.classList.add("in");clearTimeout(t.t);t.t=setTimeout(()=>t.classList.remove("in"),3600);burst(8)};
 /* partículas */
-const cv=$("#cv"),cx=cv.getContext("2d"),still=matchMedia("(prefers-reduced-motion:reduce)").matches;let P=[];
+const cv=$("#cv"),cx=cv.getContext("2d"),still=matchMedia("(prefers-reduced-motion:reduce)").matches;let P=[],particleFrame=0;
 function rs(){const r=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*r;cv.height=innerHeight*r;cx.setTransform(r,0,0,r,0,0)}rs();addEventListener("resize",rs);
 const pc=["#e8869a","#f3c4cd","#efe4cb","#d6566f","#cfa957","#f7e3e8"];
-function burst(n,x,y){if(still)n=Math.min(n,6);for(let i=0;i<n&&P.length<280;i++){const at=x!==undefined;P.push({x:at?x:Math.random()*innerWidth,y:at?y:innerHeight+10,vx:(Math.random()-.5)*(at?5:3),vy:at?-2-Math.random()*4:-(4+Math.random()*7),r:3+Math.random()*5,a:Math.random()*6,va:(Math.random()-.5)*.15,c:pc[i%pc.length],l:1,g:1})}}
-if(!still)for(let i=0;i<28;i++)P.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:0,vy:-.15-Math.random()*.2,r:1+Math.random()*1.6,a:0,va:0,c:"#f3d9df",l:Math.random(),g:0});
-(function f(){cx.clearRect(0,0,innerWidth,innerHeight);for(let i=P.length-1;i>=0;i--){const p=P[i];p.x+=p.vx;p.y+=p.vy;
- if(p.g){p.vy+=.09;p.vx*=.995;p.a+=p.va;p.l-=.0035;if(p.l<=0||p.y>innerHeight+30){P.splice(i,1);continue}cx.globalAlpha=Math.min(1,p.l*2)}
- else{p.l+=.01;cx.globalAlpha=.25+.35*Math.sin(p.l*3);if(p.y<-5){p.y=innerHeight+5;p.x=Math.random()*innerWidth}}
- cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.beginPath();p.g?cx.ellipse(0,0,p.r,p.r*.55,0,0,6.3):cx.arc(0,0,p.r,0,6.3);cx.fill();cx.restore()}
- requestAnimationFrame(f)})();
+function drawParticles(){
+ particleFrame=0;cx.clearRect(0,0,innerWidth,innerHeight);
+ for(let i=P.length-1;i>=0;i--){const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.09;p.vx*=.995;p.a+=p.va;p.l-=.018;
+  if(p.l<=0||p.y>innerHeight+30){P.splice(i,1);continue}
+  cx.globalAlpha=Math.min(1,p.l*2);cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.beginPath();cx.ellipse(0,0,p.r,p.r*.55,0,0,6.3);cx.fill();cx.restore()
+ }
+ if(P.length)particleFrame=requestAnimationFrame(drawParticles);
+}
+function burst(n,x,y){
+ if(still)return;
+ const at=x!==undefined;
+ for(let i=0;i<n&&P.length<160;i++)P.push({x:at?x:Math.random()*innerWidth,y:at?y:innerHeight+10,vx:(Math.random()-.5)*(at?5:3),vy:at?-2-Math.random()*4:-(4+Math.random()*7),r:3+Math.random()*5,a:Math.random()*6,va:(Math.random()-.5)*.15,c:pc[i%pc.length],l:1});
+ if(P.length&&!particleFrame)particleFrame=requestAnimationFrame(drawParticles);
+}
 if(hasCompletedGate()){
  $("#gate").hidden=true;document.body.classList.remove("waiting");begin();
 }else{
