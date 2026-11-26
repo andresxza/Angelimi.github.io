@@ -129,7 +129,7 @@ body.celebrating .gate-bow{animation:gate-bow-release 1s 2.8s cubic-bezier(.2,.8
 .memory-card.matched .memory-card-back{box-shadow:inset 0 1px 6px #fff,inset 0 -6px 12px #82582d66,0 0 20px #ffe49a}
 .gate-card.challenge-mode{width:min(92%,430px);padding:clamp(28px,7vw,38px)}
 .gate-card.challenge-mode .gate-scene,.gate-card.challenge-mode .gate-title,.gate-card.challenge-mode .gate-date,.gate-card.challenge-mode .gate-countdown,.gate-card.challenge-mode .gate-sound{display:none}
-.gate-card.challenge-mode .gate-challenge{animation:challenge-arrive .55s cubic-bezier(.2,.8,.2,1) both}
+.gate-card.challenge-mode .gate-challenge{animation:challenge-arrive .76s cubic-bezier(.2,.8,.2,1) both}
 body.celebrating #gate::after{background:radial-gradient(ellipse at 50% 45%,#fff5d633 0%,#f0c46b22 19%,transparent 65%),radial-gradient(ellipse at 50% 48%,#08040b44 12%,#08040bd9 100%);animation:gate-mystery-dim 4.5s ease-in-out both}
 @keyframes gate-arrive{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes gate-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
@@ -238,7 +238,7 @@ body.celebrating #gate::before{animation:gate-stars-release 4.5s ease-in-out bot
 .ok{opacity:0;transition:opacity 1s;color:var(--wine2)}.ok.show{opacity:1}
 /* 7 sobres anidados y fecha */
 .stamp{border:2px solid var(--gold);color:var(--gold);padding:3px 16px;letter-spacing:.34em;text-transform:uppercase;font-size:.7rem;rotate:-7deg;margin-bottom:14px;border-radius:4px}
-.nest{margin-top:150px;transition:opacity 280ms ease-out,transform 340ms var(--slide-ease)}.nest.fade{opacity:0;transform:scale(.98);pointer-events:none}
+.nest{margin-top:150px;transition:opacity 520ms ease-out,transform 620ms var(--slide-ease)}.nest.fade{opacity:0;transform:scale(.98);pointer-events:none}
 #eo .e-card{--w:100%}#ei{position:absolute;width:82%;left:9%;top:12%;--ec:#6e2133;--ec2:#862a40;--ec3:#5a1a29}#ei .e-card{background:#efe4cb}
 #eo.open>.e-card{transform:translateY(-58%) scale(1.08)}
 .scard{position:absolute;left:50%;top:50%;translate:-50% -46%;scale:.3;opacity:0;pointer-events:none;transition:scale 1.2s cubic-bezier(.3,1.3,.5,1),opacity .8s;width:min(90vw,380px)}.scard.show{scale:1;opacity:1;pointer-events:auto}
@@ -362,18 +362,18 @@ body::before{
 .lead{color:#e9dfd5;font-size:clamp(1rem,4.2vw,1.14rem);line-height:1.65;text-shadow:0 2px 20px #0008}
 .t-knit .lead{color:#eee2d5}
 .mini{color:#d8cbc0;letter-spacing:.025em}
-.rv{transition:opacity 520ms ease-out,transform 620ms var(--slide-ease)}
-.in .rv{transition-delay:calc(var(--i,0)*55ms)}
+.rv{transition:opacity 760ms ease-out,transform 850ms var(--slide-ease)}
+.in .rv{transition-delay:calc(var(--i,0)*70ms)}
 
 /* Cada escena revela sus elementos con un ritmo distinto. */
-.sc:nth-of-type(2).in .rv{animation:scene-rise 620ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(3).in .rv{animation:scene-focus 620ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(4).in .rv{animation:scene-drift 620ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(5).in .rv{animation:scene-open 680ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(6).in .rv{animation:scene-settle 600ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(7).in .rv{animation:scene-mystery 680ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(8).in .rv{animation:scene-letter 720ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
-.sc:nth-of-type(9).in .rv{animation:scene-gift 620ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*55ms)}
+.sc:nth-of-type(2).in .rv{animation:scene-rise 860ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(3).in .rv{animation:scene-focus 900ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(4).in .rv{animation:scene-drift 900ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(5).in .rv{animation:scene-open 940ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(6).in .rv{animation:scene-settle 860ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(7).in .rv{animation:scene-mystery 940ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(8).in .rv{animation:scene-letter 980ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
+.sc:nth-of-type(9).in .rv{animation:scene-gift 900ms var(--slide-ease) both;animation-delay:calc(var(--i,0)*70ms)}
 @keyframes scene-rise{from{opacity:0;transform:translateY(38px)}to{opacity:1;transform:translateY(0)}}
 @keyframes scene-focus{from{opacity:0;transform:scale(.94);filter:blur(8px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
 @keyframes scene-drift{from{opacity:0;transform:translateX(-34px) rotate(-2deg)}to{opacity:1;transform:translateX(0) rotate(0)}}
@@ -531,7 +531,7 @@ body::before{
 }
 </style>
 <style>
-:root{--slide-ease:cubic-bezier(.16,1,.3,1)}
+:root{--slide-ease:cubic-bezier(.32,.12,.25,1)}
 @keyframes scene-rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
 @keyframes scene-focus{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @keyframes scene-drift{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
@@ -548,30 +548,31 @@ body::before{
 @keyframes button-rise{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
 .cue,#gate::before,#gate::after,.gate-scene,.gate-envelope,.gate-front,.gate-seal,.gate-bow,
 .e-seal,.bow,.lock.open .eye,.im,.fph,#sb,.gift,#cat .e{animation:none}
-.hero.in #env1{animation:envelope-arrive 620ms var(--slide-ease) 80ms both}
-#hl .ln{transition:clip-path 440ms var(--slide-ease);transition-delay:calc(var(--i)*55ms + 40ms)}
-.sc:nth-of-type(2).in #hl .ln{animation:poem-slide 440ms var(--slide-ease) both;animation-delay:calc(var(--i)*55ms + 40ms)}
-.pc{transition:transform 680ms var(--slide-ease),opacity 360ms ease;transition-delay:calc(var(--k)*65ms)}
-.sc:nth-of-type(3).in .pc{animation:photo-slide 520ms var(--slide-ease) both;animation-delay:calc(var(--k)*65ms)}
+.hero.in #env1{animation:envelope-arrive 1s var(--slide-ease) 100ms both}
+#hl .ln{transition:clip-path 700ms var(--slide-ease);transition-delay:calc(var(--i)*70ms + 60ms)}
+.sc:nth-of-type(2).in #hl .ln{animation:poem-slide 760ms var(--slide-ease) both;animation-delay:calc(var(--i)*70ms + 60ms)}
+.pc{transition:transform 850ms var(--slide-ease),opacity 650ms ease-out;transition-delay:calc(var(--k)*70ms)}
+.sc:nth-of-type(3).in .pc{animation:photo-slide 760ms var(--slide-ease) both;animation-delay:calc(var(--k)*70ms)}
 #fcs .fc:nth-child(odd){--slide-from:-24px}
 #fcs .fc:nth-child(even){--slide-from:24px}
-.fc{transition:transform 620ms var(--slide-ease) calc(var(--k)*65ms)}
-.sc:nth-of-type(4).in .fc{animation:tulip-slide 460ms var(--slide-ease) both;animation-delay:calc(var(--k)*55ms)}
-.lk-d{transition:transform 760ms var(--slide-ease)}
-.eye{transition:transform 520ms var(--slide-ease) 120ms}
-.sc:nth-of-type(5).in .eye{animation:eye-slide 420ms var(--slide-ease) both;animation-delay:120ms}
-.pt{animation:sp 520ms var(--slide-ease) both}
+.fc{transition:transform 900ms var(--slide-ease) calc(var(--k)*75ms)}
+.sc:nth-of-type(4).in .fc{animation:tulip-slide 760ms var(--slide-ease) both;animation-delay:calc(var(--k)*75ms)}
+.lk-d{transition:transform 920ms var(--slide-ease)}
+.eye{transition:transform 760ms var(--slide-ease) 180ms}
+.sc:nth-of-type(5).in .eye{animation:eye-slide 700ms var(--slide-ease) both;animation-delay:180ms}
+.pt{animation:sp 680ms var(--slide-ease) both}
 @keyframes sp{from{opacity:0;transform:translateY(16px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
-.ok{translate:0 12px;transition:opacity 360ms ease,translate 420ms var(--slide-ease)}
+.ok{translate:0 12px;transition:opacity 560ms ease-out,translate 620ms var(--slide-ease)}
 .ok.show{translate:0 0}
-.e-card{transition:transform 680ms var(--slide-ease) 100ms}
-.e-flap{transition:transform 560ms var(--slide-ease),z-index 0s 280ms,opacity 360ms ease}
-.scard{scale:.94;transition:scale 420ms var(--slide-ease),opacity 220ms ease-out,translate 420ms var(--slide-ease)}
+.e-card{transition:transform 1.12s var(--slide-ease) 140ms}
+.e-flap{transition:transform 1s var(--slide-ease),z-index 0s 500ms,opacity 650ms ease-out}
+.env.done>.e-card{transition:transform 720ms var(--slide-ease),box-shadow 720ms ease-out}
+.scard{scale:.94;transition:scale 720ms var(--slide-ease),opacity 520ms ease-out,translate 720ms var(--slide-ease)}
 .scard.show{translate:-50% -52%}
-#lt2 .n2p{transform:translateX(20px);transition:opacity 380ms ease,transform 420ms var(--slide-ease);transition-delay:calc(var(--i)*65ms + 60ms)}
-#sb:not(.hide){animation:button-rise 440ms var(--slide-ease) both}
+#lt2 .n2p{transform:translateX(20px);transition:opacity 620ms ease-out,transform 700ms var(--slide-ease);transition-delay:calc(var(--i)*110ms + 90ms)}
+#sb:not(.hide){animation:button-rise 650ms var(--slide-ease) both}
 .btn:active,.e-seal:active,#gift:active,.bow:active,.fc:active,.pc:active{scale:.97}
-.lace .line{width:80px;transform:scaleX(0);transform-origin:center;transition:transform 460ms var(--slide-ease)}
+.lace .line{width:80px;transform:scaleX(0);transform-origin:center;transition:transform 680ms var(--slide-ease)}
 .in .line{width:80px;transform:scaleX(1)}
 .btn{transition:transform 170ms var(--slide-ease),background 190ms ease,box-shadow 190ms ease}
 .btn:active{transform:scale(.97)}
@@ -1000,10 +1001,10 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)song.pause(
 /* sobres, pila de fotos, moño y medallón */
 const SEAL='<svg viewBox="0 0 60 70" width="30"><path d="M30 60C30 44 31 34 30 22" stroke="#f5eedb" stroke-width="3" fill="none"/><path d="M30 34C14 32 10 14 14 4C21 11 26 9 30 1C34 9 39 11 46 4C50 14 46 32 30 34Z" fill="#f5eedb"/></svg>';
 $$(".e-seal").forEach(b=>b.innerHTML=SEAL);
-function openEnv(e,fn,ms){if(e.classList.contains("open"))return;e.classList.add("open");const r=e.getBoundingClientRect();burst(16,r.left+r.width/2,r.top+r.height*.6);fn&&setTimeout(fn,ms||800)}
+function openEnv(e,fn,ms){if(e.classList.contains("open"))return;e.classList.add("open");const r=e.getBoundingClientRect();burst(16,r.left+r.width/2,r.top+r.height*.6);fn&&setTimeout(fn,ms||1350)}
 $("#seal").onclick=()=>{startMusic();openEnv($("#env1"),()=>{$("#env1").classList.add("done");$(".hero").classList.add("opened");$(".hero .cue").textContent="desliza ↓";burst(40)})};
-$("#seal1").onclick=()=>openEnv($("#eo"),()=>{$("#cue2").textContent="ahora abre el otro"},800);
-$("#seal2").onclick=()=>{if(!$("#eo").classList.contains("open"))return;openEnv($("#ei"),()=>{$("#nest").classList.add("fade");$("#scard").classList.add("show");$("#cue2").classList.add("hide")},800)};
+$("#seal1").onclick=()=>openEnv($("#eo"),()=>{$("#cue2").textContent="ahora abre el otro"},1350);
+$("#seal2").onclick=()=>{if(!$("#eo").classList.contains("open"))return;openEnv($("#ei"),()=>{$("#nest").classList.add("fade");$("#scard").classList.add("show");$("#cue2").classList.add("hide")},1350)};
 (function(){const P=$("#pile"),it=C.fotos.items,end=$("#ph"),h0=end.textContent;
 P.innerHTML=it.map((o,k)=>'<div class="pc" style="--k:'+k+";--r:"+(k%2?1:-1)*(2+k*1.5)+"deg;--gx:"+(k%2?"":"-")+"150%;--gr:"+(k%2?18:-18)+"deg;z-index:"+(9-k)+'"><div class="fi"><div class="fa">'+(o.src?'<div class="im" style="background-image:url('+o.src+')"></div>':'<div class="im ph">tu foto aquí</div>')+"<b>"+o.f+'</b></div><div class="fb">'+o.b+"</div></div></div>").join("");
 const cs=$$(".pc");let i=0;
